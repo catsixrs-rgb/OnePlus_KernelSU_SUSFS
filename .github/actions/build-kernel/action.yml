@@ -1523,6 +1523,11 @@ runs:
             echo "Adding <trace/hooks/blk.h> to namespace.c for SUSFS patch context (OnePlus wild source lacks it)"
             sed -i '/#include "internal.h"/a #include <trace\/hooks\/blk.h>' ./fs/namespace.c
           fi
+          mkdir -p ./include/trace/hooks
+          if [ ! -f ./include/trace/hooks/blk.h ]; then
+            printf '#ifndef _TRACE_HOOKS_BLK_STUB_H\n#define _TRACE_HOOKS_BLK_STUB_H\n#endif\n' > ./include/trace/hooks/blk.h
+            echo "Created stub ./include/trace/hooks/blk.h (OnePlus source lacks it; SUSFS patch only needs it as include context)"
+          fi
         fi
         
         patch -p1 --forward -F 3 < "$SUSFS_FOLDER/kernel_patches/50_add_susfs_in_${{ env.SUSFS_KERNEL_BRANCH }}.patch"
