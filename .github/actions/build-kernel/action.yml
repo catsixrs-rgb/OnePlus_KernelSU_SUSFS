@@ -1518,6 +1518,11 @@ runs:
             echo "#include <linux/dma-buf.h> Line not found. Adding missing header"
             sed -i '/#include <linux\/cpufreq_times.h>/a #include <linux\/dma-buf.h>' ./fs/proc/base.c
           fi
+
+          if ! grep -qxF '#include <trace/hooks/blk.h>' ./fs/namespace.c; then
+            echo "Adding <trace/hooks/blk.h> to namespace.c for SUSFS patch context (OnePlus wild source lacks it)"
+            sed -i '/#include "internal.h"/a #include <trace\/hooks\/blk.h>' ./fs/namespace.c
+          fi
         fi
         
         patch -p1 --forward -F 3 < "$SUSFS_FOLDER/kernel_patches/50_add_susfs_in_${{ env.SUSFS_KERNEL_BRANCH }}.patch"
